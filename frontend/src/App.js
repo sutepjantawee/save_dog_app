@@ -1,17 +1,67 @@
-import './App.css';
-import Signin from './signin';
-import User from './user';
-import { Routes, Route, Link } from "react-router-dom";
+import * as React from 'react';
+import {Routes,Route, } from 'react-router-dom';
+
+import { useState, useMemo } from 'react';
+import { Link } from "react-router-dom";
+import { useContext } from 'react';
+import DataContext from './DataContext';
+
 
 function App() {
+
+const [userName, setUserName] = useState([])
+const value = useMemo( ()=>({userName, setUserName}),[userName] );
+
+   return (
+ 
+     <div>
+       <DataContext.Provider value={value}>
+       <Routes>
+         <Route path="/" element={<Login />} />
+         <Route path="/user" element={<User />} />
+       </Routes>
+       </DataContext.Provider>
+ 
+     </div>
+ 
+   );
+ }
+ export default App;
+ 
+
+const Login = () => {
+
+ const { userName, setUserName } = useContext(DataContext)
+ const change = event => setUserName(event.target.value)
+ 
   return (
     <div>
-     <Routes>
-        <Route path="/" element={<Signin />} />
-        <Route path="user" element={<User />} />
-      </Routes>   
+      
+      <form> Username: 
+        <input type="text" name="name" onChange={change} value={userName}/>
+        <br/>
+      <button>
+        <Link to="/user">Login</Link>     
+      </button>
+      </form>
+      
     </div>
-  );
+  )
 }
 
-export default App;
+
+const User = () => {
+  const {userName}=useContext(DataContext)
+  
+  return (
+    <div> {userName} <br/>
+      <button>
+        <Link to="/">Logout</Link>
+      </button>
+    </div>
+  )
+}
+
+
+
+
