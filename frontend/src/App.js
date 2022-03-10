@@ -3,6 +3,8 @@ import { Routes, Route, useNavigate, useLocation, Navigate, Outlet, } from "reac
 import { fakeAuthProvider } from "./auth";
 import Axios from "axios"
 import { useEffect, useState } from "react";
+
+
 export default function App() {
   return (
 
@@ -15,7 +17,6 @@ export default function App() {
             element={
               <RequireAuth>
                 <Username />
-                <Usernametest />
               </RequireAuth>
             }
           />
@@ -25,13 +26,14 @@ export default function App() {
   );
 }
 
-
+//createContext
 let DataContext = React.createContext([]);
 
 function useAuth() {
   return React.useContext(DataContext);
 }
 
+//หน้า Login
 function Login() {
   let navigate = useNavigate();
   let location = useLocation();
@@ -59,6 +61,7 @@ function Login() {
   );
 }
 
+//หน้า Layout  
 function Layout() {
   return (
     <div>
@@ -68,8 +71,7 @@ function Layout() {
   );
 }
 
-
-
+//เชื่อม server
 function AuthProvider({ children }) {
   let [user, setUser] = React.useState(null);
 
@@ -92,7 +94,7 @@ function AuthProvider({ children }) {
   </DataContext.Provider>;
 }
 
-
+//หน้า User
 function AuthStatus() {
   let auth = useAuth();
   let navigate = useNavigate();
@@ -126,7 +128,7 @@ function RequireAuth({ children }) {
 }
 
 
-
+// Add image และ Remove Image
 function Username() {
   useEffect(()=>{
     Axios.get('https://dog.ceo/api/breeds/image/random').then(response =>{
@@ -143,23 +145,22 @@ function Username() {
 
   const [deletesave,setDeletesave] = useState([])
   const deleteimg = () => {
-    save.shift()
+    save.splice(0,1)
     console.log(save)
     setDeletesave([...deletesave,imgDog])
   }
 
-
   return <div>
  <img src={imgDog} />
+ <br></br>
+ <button onClick={saveimg}>ADD</button>
+ <br></br>
 
-<button onClick={saveimg}>ADD</button>
-  
- <button onClick={deleteimg}>DELETE</button>
  {save.map((todo,index)=>{
     return <img src={todo}/>
   })}
-
-
+ <button onClick={deleteimg}>DELETE</button>
+ 
   </div>
 }
 
@@ -168,87 +169,3 @@ function Username() {
 
 
 
-
-function Todo({ todo, index, removeTodo }) {
-  return (
-    <div
-      className="todo"
-      style={{ textDecoration: todo.isCompleted ? "line-through" : "" }}
-    >
-      {todo.text}
-      <div>
-
-        <button onClick={() => removeTodo(index)}>x</button>
-      </div>
-    </div>
-  );
-}
-
-function TodoForm({ addTodo }) {
-  const [value, setValue] = React.useState("");
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    if (!value) return;
-    addTodo(value);
-    setValue("");
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        className="input"
-        value={value}
-        onChange={e => setValue(e.target.value)}
-      />
-    </form>
-  );
-}
-
-function Usernametest() {
-  const [todos, setTodos] = React.useState([
-    {
-      text: "Learn about React",
-      isCompleted: false
-    },
-    {
-      text: "Meet friend for lunch",
-      isCompleted: false
-    },
-    {
-      text: "Build really cool todo app",
-      isCompleted: false
-    }
-  ]);
-
-
-
-  const addTodo = text => {
-    const newTodos = [...todos, { text }];
-    setTodos(newTodos);
-  };
-
-
-  const removeTodo = index => {
-    const newTodos = [...todos];
-    newTodos.splice(index, 1);
-    setTodos(newTodos);
-  };
-
-  return (
-    <div className="app">
-      <div className="todo-list">
-        {todos.map((todo, index) => (
-          <Todo
-            key={index}
-            index={index}
-            todo={todo}
-            removeTodo={removeTodo}
-          />
-        ))}
-        <TodoForm addTodo={addTodo} />
-      </div>
-    </div>
-  );
-}
