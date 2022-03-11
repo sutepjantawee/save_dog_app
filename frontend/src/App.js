@@ -128,39 +128,52 @@ function RequireAuth({ children }) {
 }
 
 
-// Add image และ Remove Image
+// Add image และ Remove Image และ change Image
 function Username() {
 
   const [save, setSave] = useState([])
-  useEffect(() => {
+  const [imgDog, setImgdog] = useState('');
+
+
+   useEffect(() => {
+    Axios.get('https://dog.ceo/api/breeds/image/random').then(response => {
+      setImgdog(response.data.message)
+   })
+   }, [])
+
+  const changeimg = () => {
     Axios.get('https://dog.ceo/api/breeds/image/random').then(response => {
       setImgdog(response.data.message)
     })
-  }, [save])
-  const [imgDog, setImgdog] = useState('');
+  }
 
   const saveimg = () => {
-    setSave([...save, imgDog])
+    setSave([...save, { img: imgDog, username: auth.user },])
+    changeimg()
   }
   console.log(save)
 
-  const [deletesave, setDeletesave] = useState([])
+  
   const deleteimg = index => {
     save.splice(index, 1)
-    setDeletesave([...deletesave, imgDog])
+    setSave([...save])
   }
+  console.log(save)
 
+  let auth = useAuth();
 
   return <div>
     <img style={{ width: 100, height: 100 }} src={imgDog} />
     <br></br>
-    <button onClick={saveimg}>ADD</button>
+    <button onClick={saveimg}>ADD</button> <button onClick={changeimg}>change</button>
     <br></br>
     <br></br>
 
-    {save.map((todo, index) => {
+    {save.map((value, index) => {
+      console.log(value)
       return <div>
-        <img style={{ width: 100, height: 100 }} src={todo} />
+        <img style={{ width: 100, height: 100 }} src={value.img} />
+        <span style={{ fontSize: 30 }}>เพิ่มโดย{" "}{value.username}</span>
         <button onClick={() => deleteimg(index)}>DELETE</button>
       </div>
     })}
